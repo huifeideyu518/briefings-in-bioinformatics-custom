@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" version="1.0"
+  class="in-text"
+  page-range-format="minimal"
+  demote-non-dropping-particle="sort-only"
+  default-locale="en-GB">
+  <info>
+    <title>Briefings in Bioinformatics (Custom Numeric with DOI, period before et al.)</title>
+    <title-short>BiB Custom</title-short>
+    <id>http://www.zotero.org/styles/briefings-in-bioinformatics-custom</id>
+    <link href="http://www.zotero.org/styles/briefings-in-bioinformatics-custom" rel="self"/>
+    <link href="https://academic.oup.com/bib/pages/msprep_submission" rel="documentation"/>
+    <author>
+      <name>ChatGPT</name>
+    </author>
+    <category citation-format="numeric"/>
+    <category field="biology"/>
+    <updated>2025-10-30T00:00:00+00:00</updated>
+    <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
+  </info>
+
+  <!-- ===== Macros ===== -->
+
+  <!-- author names: Surname Initials, commas between authors, and a period before 'et al.' -->
+  <macro name="author">
+    <names variable="author" delimiter=", " et-al-separator=". " et-al-term="et al.">
+      <name sort-separator=" " delimiter=", " delimiter-precedes-last="never" initialize-with="" name-as-sort-order="all"/>
+      <label form="short" prefix=", " strip-periods="true"/>
+      <substitute>
+        <names variable="editor"/>
+        <text variable="container-title"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <macro name="editor">
+    <names variable="editor">
+      <name sort-separator=" " delimiter=", " delimiter-precedes-last="never" initialize-with="" name-as-sort-order="all"/>
+      <label form="short" prefix=" (" suffix=")" strip-periods="true"/>
+    </names>
+  </macro>
+
+  <macro name="issued-year">
+    <date variable="issued">
+      <date-part name="year"/>
+    </date>
+  </macro>
+
+  <macro name="title">
+    <text variable="title"/>
+  </macro>
+
+  <macro name="container-journal">
+    <text variable="container-title" form="short" strip-periods="false"/>
+  </macro>
+
+  <macro name="publisher-place">
+    <choose>
+      <if variable="publisher-place" match="any">
+        <text variable="publisher-place"/>
+      </if>
+      <else>
+        <text macro="publisher-place-fallback"/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="publisher-place-fallback">
+    <text value=""/>
+  </macro>
+
+  <macro name="publisher">
+    <text variable="publisher"/>
+  </macro>
+
+  <macro name="pages">
+    <text variable="page"/>
+  </macro>
+
+  <macro name="edition">
+    <choose>
+      <if is-numeric="edition">
+        <number variable="edition" form="ordinal"/>
+      </if>
+      <else>
+        <text variable="edition"/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="access">
+    <choose>
+      <if variable="DOI">
+        <text value=". https://doi.org/" suffix="" prefix=""/>
+        <text variable="DOI"/>
+      </if>
+      <else-if variable="URL">
+        <text value=". " />
+        <text variable="URL"/>
+      </else-if>
+    </choose>
+  </macro>
+
+  <!-- ===== Citation (in-text) ===== -->
+  <citation collapse="citation-number">
+    <sort>
+      <key variable="citation-number"/>
+    </sort>
+    <layout prefix="[" suffix="]" delimiter=",">
+      <text variable="citation-number"/>
+    </layout>
+  </citation>
+
+  <!-- ===== Bibliography ===== -->
+  <bibliography et-al-min="4" et-al-use-first="3" entry-spacing="0" line-spacing="1">
+    <sort>
+      <key variable="citation-number"/>
+    </sort>
+    <layout>
+      <text variable="citation-number" suffix=". "/>
+      <text macro="author"/>
+      <!-- Journal article -->
+      <choose>
+        <if type="article-journal article-magazine article-newspaper" match="any">
+          <text macro="title" prefix=". " suffix=". "/>
+          <text macro="container-journal" suffix=" "/>
+          <text macro="issued-year" suffix="; "/>
+          <text variable="volume" suffix=":"/>
+          <text macro="pages"/>
+          <text macro="access"/>
+        </if>
+
+        <!-- Book -->
+        <else-if type="book">
+          <text macro="title" prefix=". " suffix=". "/>
+          <text macro="publisher-place" suffix=": "/>
+          <text macro="publisher" suffix=", "/>
+          <text macro="issued-year"/>
+          <text macro="access"/>
+        </else-if>
+
+        <!-- Chapter in edited book -->
+        <else-if type="chapter paper-conference" match="any">
+          <text macro="title" prefix=". " suffix=". "/>
+          <text value="In: "/>
+          <names variable="editor">
+            <name sort-separator=" " delimiter=", " delimiter-precedes-last="never" initialize-with="" name-as-sort-order="all"/>
+          </names>
+          <text value=" (ed.), " />
+          <text variable="container-title" suffix=". "/>
+          <text macro="publisher-place" suffix=": "/>
+          <text macro="publisher" suffix=", "/>
+          <text macro="issued-year" suffix=", " />
+          <text macro="pages"/>
+          <text macro="access"/>
+        </else-if>
+
+        <!-- Thesis / Report -->
+        <else-if type="thesis report" match="any">
+          <text macro="title" prefix=". " suffix=". "/>
+          <text variable="genre" suffix=". "/>
+          <text macro="publisher" suffix=", "/>
+          <text macro="issued-year"/>
+          <text macro="access"/>
+        </else-if>
+
+        <!-- Webpage / dataset / software generic fallback -->
+        <else>
+          <text macro="title" prefix=". " suffix=". "/>
+          <text variable="container-title" suffix=" "/>
+          <text macro="issued-year"/>
+          <text macro="access"/>
+        </else>
+      </choose>
+    </layout>
+  </bibliography>
+</style>
